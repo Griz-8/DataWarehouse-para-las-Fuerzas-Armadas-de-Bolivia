@@ -1,0 +1,84 @@
+{
+	"name": "p_ingesta_oltp_to_bronze",
+	"properties": {
+		"activities": [
+			{
+				"name": "fe_ingesta_tablas",
+				"type": "ForEach",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@createArray('tbl_estructura_organizacional', 'tbl_unidades', 'tbl_rangos', 'tbl_especialidades', 'tbl_tipos_movimiento', 'tbl_tipos_operacion', 'tbl_zonas', 'tbl_efectivos', 'tbl_movimientos_personal', 'tbl_operaciones')",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "Copy data2",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"sink": {
+									"type": "ParquetSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings"
+									},
+									"formatSettings": {
+										"type": "ParquetWriteSettings"
+									}
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "ds_oltp_tbl_zonas",
+									"type": "DatasetReference",
+									"parameters": {
+										"p_table": "@item()"
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "Parquet2",
+									"type": "DatasetReference",
+									"parameters": {
+										"p_folder": {
+											"value": "@concat('bronze/',item())",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					]
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2026-06-03T21:12:13Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

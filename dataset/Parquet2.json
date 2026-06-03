@@ -1,0 +1,62 @@
+{
+	"name": "Parquet2",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_adls_bronze_silver",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"p_folder": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": {
+					"value": "@dataset().p_folder",
+					"type": "Expression"
+				},
+				"fileSystem": "data-warehouse"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "id_zona",
+				"type": "INT32"
+			},
+			{
+				"name": "nombre",
+				"type": "UTF8"
+			},
+			{
+				"name": "departamento",
+				"type": "UTF8"
+			},
+			{
+				"name": "frontera_con",
+				"type": "UTF8"
+			},
+			{
+				"name": "tipo_terreno",
+				"type": "UTF8"
+			},
+			{
+				"name": "altitud_msnm",
+				"type": "INT32"
+			},
+			{
+				"name": "nivel_riesgo",
+				"type": "UTF8"
+			},
+			{
+				"name": "acceso_carretero",
+				"type": "BOOLEAN"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}
